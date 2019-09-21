@@ -19,7 +19,6 @@ namespace TechTest.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(AverageWordsInSongSearchViewModel viewModel)
         {
-
             return View();
         }
     }
