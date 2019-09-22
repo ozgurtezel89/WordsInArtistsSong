@@ -11,15 +11,17 @@ namespace TechTest.BusinessLogic.Services
     public class SearchServices
     {
         /// <summary>
-        /// takes the artist name and returns its first 100 songs' names
+        /// takes the artist name and returns its first songs' names depending on given limit
         /// </summary>
         /// <param name="artistNameParam"></param>
+        /// <param name="offsetParam"></param>
+        /// <param name="limitParam"></param>
         /// <returns></returns>
-        public List<string> SearchArtistAllSongsByName(string artistNameParam)
+        public List<string> SearchArtistAllSongsByName(string artistNameParam, int offsetParam, int limitParam)
         {
             // query is a Lucene querry and limit is 1 to 100 these values sent as querry string
-            string ApiUrlToGetArtistsAllSongs = "https://musicbrainz.org/ws/2/recording/?limit=100&query=artist:";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrlToGetArtistsAllSongs + artistNameParam);
+            string ApiUrlToGetArtistsAllSongs = String.Format("https://musicbrainz.org/ws/2/recording/?limit={0}&offset={1}&query=artist:{2}", limitParam, offsetParam, artistNameParam);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrlToGetArtistsAllSongs);
             request.Method = "GET";
             // https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting due to rate limiting I am asked to add userAgent info. Otherwise I was getting 403 forbidden error
             request.UserAgent = "Tech Test/<1.0> ( ozgurtezel89@gmail.com )";
