@@ -40,7 +40,8 @@ namespace TechTest.Controllers
 
             // as there might be duplicate records due to data on the web-api it is good to get rid off them (as per search term artist:tarkan there were 358 results before running the distinct method, now results are reduced to 203, will be more resource efficient when we use this song names to get the count of words)
             artistsSongs = (from d in artistsSongs select d).Distinct().ToList();
-            
+
+            service.GetCountOfWordsOfSong("Coldplay", "Adventure of a Lifetime");
 
             return View();
         }
