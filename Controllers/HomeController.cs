@@ -19,6 +19,10 @@ namespace TechTest.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(AverageWordsInSongSearchViewModel viewModel)
         {
+            TechTest.BusinessLogic.Services.SearchServices service = new BusinessLogic.Services.SearchServices();
+
+            service.SearchArtistAllSongsByName(viewModel.ArtistNameToSearch);
+
             return View();
         }
     }
