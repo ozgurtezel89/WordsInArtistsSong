@@ -49,31 +49,39 @@ namespace TechTest.BusinessLogic.Services
         }
 
         public int GetCountOfWordsOfSong(string artistNameParam, string songNameParam)
-        {
-            // query to get lrycs of a song
-            string ApiUrlToGetLrycsOfSong = String.Format("https://api.lyrics.ovh/v1/{0}/{1}",artistNameParam,songNameParam);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrlToGetLrycsOfSong);
-            request.Method = "GET";
-            request.Accept = "application/json";
-
-            HttpWebResponse response = null;
-            response = (HttpWebResponse)request.GetResponse();
-            string responseJsonString = "";
-            using (Stream stream = response.GetResponseStream())
+        {            
+            try
             {
-                StreamReader streamReader = new StreamReader(stream);
-                responseJsonString = streamReader.ReadToEnd();
-                streamReader.Close();
+                // query to get lrycs of a song
+                string ApiUrlToGetLrycsOfSong = String.Format("https://api.lyrics.ovh/v1/{0}/{1}", artistNameParam, songNameParam);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrlToGetLrycsOfSong);
+                request.Method = "GET";
+                request.Accept = "application/json";
+
+                HttpWebResponse response = null;
+                response = (HttpWebResponse)request.GetResponse();
+                string responseJsonString = "";
+                using (Stream stream = response.GetResponseStream())
+                {
+                    StreamReader streamReader = new StreamReader(stream);
+                    responseJsonString = streamReader.ReadToEnd();
+                    streamReader.Close();
+                }
+                dynamic json = JsonConvert.DeserializeObject(responseJsonString);
+
+                string lyrics = Regex.Replace(json.lyrics.Value, "\n", " ");
+
+                string[] words = lyrics.Split(' ');
+
+                // there are some empty elements in the array due to new line chars being replaced with " ", I need to ignore them - will add extra pressure to memory but will return accurate results
+
+                return words.Count(x => x != "");
             }
-            dynamic json = JsonConvert.DeserializeObject(responseJsonString);
-
-            string lyrics = Regex.Replace(json.lyrics.Value, "\n", " ");
-            
-            string[] words = lyrics.Split(' ');
-
-            // there are some empty elements in the array due to new line chars being replaced with " ", I need to ignore them - will add extra pressure to memory but will return accurate results
-            return words.Count(x => x != "");
+            catch (Exception)
+            {
+                // I am not throwing any exception is here as I usualy would or at least write the song name to a spearate list to give user a notice saying this song could not be calculated
+                return 0;
+            }
         }
-
     }
 }

@@ -41,7 +41,19 @@ namespace TechTest.Controllers
             // as there might be duplicate records due to data on the web-api it is good to get rid off them (as per search term artist:tarkan there were 358 results before running the distinct method, now results are reduced to 203, will be more resource efficient when we use this song names to get the count of words)
             artistsSongs = (from d in artistsSongs select d).Distinct().ToList();
 
-            service.GetCountOfWordsOfSong("Coldplay", "Adventure of a Lifetime");
+            // lets calculate the average words now
+            // I am using decimal as its the largest numeric dataType in c#
+            decimal totalWordsInAllSongs = 0;
+            foreach (var song in artistsSongs)
+            {
+               totalWordsInAllSongs += service.GetCountOfWordsOfSong(viewModel.ArtistNameToSearch,song);
+            }
+
+            decimal average = totalWordsInAllSongs / artistsSongs.Count;
+
+            average = Math.Ceiling(average);
+
+            ViewBag.AverageWords = average;
 
             return View();
         }

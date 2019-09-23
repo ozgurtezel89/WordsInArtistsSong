@@ -3,6 +3,11 @@
     ViewBag.Title = "Home Page";
 }
 
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+</script>
+
 <div class="row">
     <div class="col-md-12">
         <h3>Tech Test - Ozgur Tezel</h3>
@@ -22,9 +27,17 @@
         <div class="col-md-12">
             <div class="form-group">
                 @Html.LabelFor(x => x.ArtistNameToSearch)
-                @Html.TextBoxFor(x => x.ArtistNameToSearch, new { @class = "form-control" , @placeholder ="Please enter the artist name" })
+                @Html.TextBoxFor(x => x.ArtistNameToSearch, new { @class = "form-control", @placeholder = "Please enter the artist name" })
             </div>
-            <button type="submit" class="btn btn-primary">Calculate Average words in artists songs</button>
+            <button type="submit" onclick="" class="btn btn-primary">Calculate Average words in artists songs</button>
         </div>
     }
+
+    @if (ViewBag.AverageWords != null)
+    {
+        <div class="alert alert-success">
+            <p>Average words in given artists songs are: @ViewBag.AverageWords</p>
+        </div>
+    }
+
 </div>
