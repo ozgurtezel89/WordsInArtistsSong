@@ -21,41 +21,31 @@ namespace TechTest.Controllers
         {
             TechTest.BusinessLogic.Services.SearchServices service = new BusinessLogic.Services.SearchServices();
 
-            List<string> artistsSongs = new List<string>();
-
-            bool artistHasMoreResulsts = true;
-            int offset = 0;
-            int limit = 100;
-
-            // as there is a limit on the web-api to 100 below is the logic to get all the song names for the artist.
-            while (artistHasMoreResulsts)
-            {
-                List<string> artistsSongsLimited = service.SearchArtistAllSongsByName(viewModel.ArtistNameToSearch,offset, limit);
-                artistsSongs.AddRange(artistsSongsLimited);
-                offset += limit;
-
-                if (artistsSongsLimited.Count == 0)
-                    artistHasMoreResulsts = false;
-            }
-
-            // as there might be duplicate records due to data on the web-api it is good to get rid off them (as per search term artist:tarkan there were 358 results before running the distinct method, now results are reduced to 203, will be more resource efficient when we use this song names to get the count of words)
-            artistsSongs = (from d in artistsSongs select d).Distinct().ToList();
+            TechTest.BusinessLogic.Models.ArtistAndSongs artistsAllSongs = service.SearchArtistAllSongsByName(viewModel.ArtistNameToSearch, 0, 5);
 
             // lets calculate the average words now
             // I am using decimal as its the largest numeric dataType in c#
             decimal totalWordsInAllSongs = 0;
-            foreach (var song in artistsSongs)
+            foreach (var song in artistsAllSongs.Songs)
             {
-               totalWordsInAllSongs += service.GetCountOfWordsOfSong(viewModel.ArtistNameToSearch,song);
+               totalWordsInAllSongs += service.GetCountOfWordsOfSong(viewModel.ArtistNameToSearch, song.Title);
             }
 
-            decimal average = totalWordsInAllSongs / artistsSongs.Count;
+            decimal average = totalWordsInAllSongs / artistsAllSongs.Songs.Count;
 
             average = Math.Ceiling(average);
 
             ViewBag.AverageWords = average;
 
             return View();
+        }
+
+        public ActionResult RefreshCache()
+        {
+            HttpContext.Cache.Remove("artistNamesAndSongs");
+
+            TempData["cacheRefreshed"] = true;
+            return View("Index");
         }
     }
 }
