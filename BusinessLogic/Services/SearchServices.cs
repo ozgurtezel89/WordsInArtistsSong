@@ -51,7 +51,7 @@ namespace TechTest.BusinessLogic.Services
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrlToGetArtistsAllSongs);
                     request.Method = "GET";
                     // https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting due to rate limiting I am asked to add userAgent info. Otherwise I was getting 403 forbidden error
-                    request.UserAgent = "Tech Test/<1.1> ( ozgur.tezel@outlook.com)";
+                    request.UserAgent = "Tech Test/<1.1> ( ozgur.tezel@outlook.com )";
                     request.Accept = "application/json";
 
                     HttpWebResponse response = null;
